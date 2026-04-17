@@ -1,41 +1,34 @@
-import React, { useEffect, useState } from 'react';
-
-interface Todo {
-  id: number;
-  text: string;
-  completed: boolean;
-}
+import React, { useEffect, useState, useCallback } from 'react';
+import TaskInput from './TaskInput';
+import TaskItem from './TaskItem';
+import type { Todo } from '../types';
 
 const TodoApp: React.FC = () => {
-  const [input, setInput] = useState('');
   const [tasks, setTasks] = useState<Todo[]>(() => {
     const saved = localStorage.getItem("mytasks");
     return saved ? JSON.parse(saved) : [];
   });
 
-  const addTask = () => {
-    if (input.trim() === '') return;
+  const addTask = useCallback((text: string) => {
     const newTask: Todo = {
       id: Date.now(),
-      text: input,
+      text: text,
       completed: false
     };
-    setTasks([...tasks, newTask]);
-    setInput('');
-  }
+    setTasks(prevTasks => [...prevTasks, newTask]);
+  }, []);
 
-  const deleteTask = (index: number) => {
-    const newTasks = tasks.filter((task, _) => task.id !== index);
-    setTasks(newTasks);
-  }
+  const deleteTask = useCallback((index: number) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== index));
+  }, []);
 
-  const toggleComplete = (index: number) => {
-    const newTasks = tasks.map(task => {
+  const toggleComplete = useCallback((index: number) => {
+    setTasks(prevTasks => prevTasks.map(task => {
       if (task.id === index) return { ...task, completed: !task.completed }
       return task;
-    })
-    setTasks(newTasks);
-  }
+    }));
+  }, []);
+
   useEffect(() => {
     localStorage.setItem("mytasks", JSON.stringify(tasks));
   }, [tasks]);
@@ -50,26 +43,15 @@ const TodoApp: React.FC = () => {
   return (
     <div className="todo-app">
       <h1>Todo App</h1>
-      <div className="input-container">
-        <input
-          type="text"
-          placeholder="Add a new task"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-        />
-        <button onClick={addTask}>Add Task</button>
-      </div>
+      <TaskInput onAddTask={addTask} />
       <ul className='task-list'>
         {tasks.map((task: Todo) => (
-          <li key={task.id}>
-            <span
-              className={`task-text ${task.completed ? 'completed' : ''}`}
-              onClick={() => toggleComplete(task.id)}
-            >
-              {task.text}
-            </span>
-            <button onClick={() => deleteTask(task.id)}>Delete</button>
-          </li>
+          <TaskItem
+            key={task.id}
+            task={task}
+            onToggle={toggleComplete}
+            onDelete={deleteTask}
+          />
         ))}
       </ul>
     </div>
