@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface Todo {
   id: number;
@@ -8,7 +8,10 @@ interface Todo {
 
 const TodoApp: React.FC = () => {
   const [input, setInput] = useState('');
-  const [tasks, setTasks] = useState<Todo[]>([]);
+  const [tasks, setTasks] = useState<Todo[]>(() => {
+    const saved = localStorage.getItem("mytasks");
+    return saved ? JSON.parse(saved) : [];
+  });
 
   const addTask = () => {
     if (input.trim() === '') return;
@@ -33,6 +36,16 @@ const TodoApp: React.FC = () => {
     })
     setTasks(newTasks);
   }
+  useEffect(() => {
+    localStorage.setItem("mytasks", JSON.stringify(tasks));
+  }, [tasks]);
+
+  useEffect(() => {
+    const savedTodos = localStorage.getItem("mytasks");
+    if (savedTodos) {
+      setTasks(JSON.parse(savedTodos));
+    }
+  }, []);
 
   return (
     <div className="todo-app">
