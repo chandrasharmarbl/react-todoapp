@@ -2,15 +2,13 @@ import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import TaskInput from './TaskInput';
 import TaskItem from './TaskItem';
 import type { Todo } from '../types';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 type FilterType = 'all' | 'active' | 'completed';
 
 const TodoApp: React.FC = () => {
-  const [tasks, setTasks] = useState<Todo[]>(() => {
-    const saved = localStorage.getItem("mytasks");
-    return saved ? JSON.parse(saved) : [];
-  });
-  
+  const [tasks, setTasks] = useLocalStorage<Todo[]>('mytasks', []);
+
   const [filter, setFilter] = useState<FilterType>('all');
 
   const addTask = useCallback((text: string) => {
@@ -54,8 +52,8 @@ const TodoApp: React.FC = () => {
     <div className="todo-app">
       <h1>Todo App</h1>
       <div className="filter-container" style={{ marginBottom: '15px' }}>
-        <select 
-          value={filter} 
+        <select
+          value={filter}
           onChange={(e) => setFilter(e.target.value as FilterType)}
           style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', outline: 'none' }}
         >
