@@ -1,46 +1,14 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import TaskInput from './TaskInput';
 import TaskItem from './TaskItem';
 import type { Todo } from '../types';
-import useLocalStorage from '../hooks/useLocalStorage';
+import { useTodoStore } from '../store/useTodoStore';
 
 type FilterType = 'all' | 'active' | 'completed';
 
 const TodoApp: React.FC = () => {
-  const [tasks, setTasks] = useLocalStorage<Todo[]>('mytasks', []);
-
+  const tasks = useTodoStore((state) => state.tasks);
   const [filter, setFilter] = useState<FilterType>('all');
-
-  const addTask = useCallback((text: string) => {
-    const newTask: Todo = {
-      id: Date.now(),
-      text: text,
-      completed: false
-    };
-    setTasks(prevTasks => [...prevTasks, newTask]);
-  }, []);
-
-  const deleteTask = useCallback((index: number) => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== index));
-  }, []);
-
-  const toggleComplete = useCallback((index: number) => {
-    setTasks(prevTasks => prevTasks.map(task => {
-      if (task.id === index) return { ...task, completed: !task.completed }
-      return task;
-    }));
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("mytasks", JSON.stringify(tasks));
-  }, [tasks]);
-
-  useEffect(() => {
-    const savedTodos = localStorage.getItem("mytasks");
-    if (savedTodos) {
-      setTasks(JSON.parse(savedTodos));
-    }
-  }, []);
 
   const filteredTasks = useMemo(() => {
     if (filter === 'active') return tasks.filter(task => !task.completed);
@@ -62,14 +30,12 @@ const TodoApp: React.FC = () => {
           <option value="completed">Completed Tasks</option>
         </select>
       </div>
-      <TaskInput onAddTask={addTask} />
+      <TaskInput />
       <ul className='task-list'>
         {filteredTasks.map((task: Todo) => (
           <TaskItem
             key={task.id}
             task={task}
-            onToggle={toggleComplete}
-            onDelete={deleteTask}
           />
         ))}
       </ul>

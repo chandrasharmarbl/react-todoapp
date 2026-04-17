@@ -1,22 +1,24 @@
 import React from 'react';
 import type { Todo } from '../types';
+import { useTodoStore } from '../store/useTodoStore';
 
 interface TaskItemProps {
   task: Todo;
-  onToggle: (id: number) => void;
-  onDelete: (id: number) => void;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
+const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
+  const toggleComplete = useTodoStore((state) => state.toggleComplete);
+  const deleteTask = useTodoStore((state) => state.deleteTask);
+
   return (
     <li>
       <span
         className={`task-text ${task.completed ? 'completed' : ''}`}
-        onClick={() => onToggle(task.id)}
+        onClick={() => toggleComplete(task.id)}
       >
         {task.text}
       </span>
-      <button onClick={() => onDelete(task.id)}>Delete</button>
+      <button onClick={() => deleteTask(task.id)}>Delete</button>
     </li>
   );
 };
