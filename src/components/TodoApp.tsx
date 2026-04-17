@@ -1,13 +1,17 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import TaskInput from './TaskInput';
 import TaskItem from './TaskItem';
 import type { Todo } from '../types';
+
+type FilterType = 'all' | 'active' | 'completed';
 
 const TodoApp: React.FC = () => {
   const [tasks, setTasks] = useState<Todo[]>(() => {
     const saved = localStorage.getItem("mytasks");
     return saved ? JSON.parse(saved) : [];
   });
+  
+  const [filter, setFilter] = useState<FilterType>('all');
 
   const addTask = useCallback((text: string) => {
     const newTask: Todo = {
@@ -40,12 +44,29 @@ const TodoApp: React.FC = () => {
     }
   }, []);
 
+  const filteredTasks = useMemo(() => {
+    if (filter === 'active') return tasks.filter(task => !task.completed);
+    if (filter === 'completed') return tasks.filter(task => task.completed);
+    return tasks;
+  }, [tasks, filter]);
+
   return (
     <div className="todo-app">
       <h1>Todo App</h1>
+      <div className="filter-container" style={{ marginBottom: '15px' }}>
+        <select 
+          value={filter} 
+          onChange={(e) => setFilter(e.target.value as FilterType)}
+          style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', outline: 'none' }}
+        >
+          <option value="all">All Tasks</option>
+          <option value="active">Active Tasks</option>
+          <option value="completed">Completed Tasks</option>
+        </select>
+      </div>
       <TaskInput onAddTask={addTask} />
       <ul className='task-list'>
-        {tasks.map((task: Todo) => (
+        {filteredTasks.map((task: Todo) => (
           <TaskItem
             key={task.id}
             task={task}
