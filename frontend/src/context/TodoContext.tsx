@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useMemo, useCallback, ReactNode, useEffect } from 'react';
-import { Todo } from '../types';
+import { type Todo } from '../types';
 
 export type FilterType = 'All' | 'Active' | 'Completed';
 
