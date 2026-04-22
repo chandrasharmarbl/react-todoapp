@@ -3,7 +3,8 @@ import { useTodoStore } from './useTodoStore';
 
 describe('useTodoStore', () => {
   beforeEach(() => {
-    useTodoStore.setState({ tasks: [] });
+    useTodoStore.setState({ tasks: [], filter: 'All' });
+    localStorage.clear();
   });
 
   it('should add a task', () => {
@@ -26,5 +27,17 @@ describe('useTodoStore', () => {
     const id = useTodoStore.getState().tasks[0].id;
     useTodoStore.getState().deleteTask(id);
     expect(useTodoStore.getState().tasks).toHaveLength(0);
+  });
+
+  it('should persist tasks to localStorage', () => {
+    useTodoStore.getState().addTask('Persisted task');
+    const saved = localStorage.getItem('mytasks-zustand');
+    expect(saved).not.toBeNull();
+    expect(saved).toContain('Persisted task');
+  });
+
+  it('should update filter state', () => {
+    useTodoStore.getState().setFilter('Completed');
+    expect(useTodoStore.getState().filter).toBe('Completed');
   });
 });
