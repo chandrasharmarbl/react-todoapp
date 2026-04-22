@@ -40,4 +40,12 @@ describe('useTodoStore', () => {
     useTodoStore.getState().setFilter('Completed');
     expect(useTodoStore.getState().filter).toBe('Completed');
   });
+
+  it('should fetch tasks asynchronously', async () => {
+    // This will simulate an API call
+    await useTodoStore.getState().fetchTasks();
+    const tasks = useTodoStore.getState().tasks;
+    expect(tasks.length).toBeGreaterThan(0);
+    expect(tasks[0].text).toBe('Fetched Task');
+  });
 });
