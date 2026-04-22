@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import TaskItem from './TaskItem';
-import { Todo } from '../types';
+import { type Todo } from '../types';
 
 describe('TaskItem Component', () => {
   const mockTask: Todo = { id: 1, text: 'Test task', completed: false };
@@ -13,10 +13,10 @@ describe('TaskItem Component', () => {
     const mockOnDelete = vi.fn();
 
     render(
-      <TaskItem 
-        task={mockTask} 
-        onToggle={mockOnToggle} 
-        onDelete={mockOnDelete} 
+      <TaskItem
+        task={mockTask}
+        onToggle={mockOnToggle}
+        onDelete={mockOnDelete}
       />
     );
 

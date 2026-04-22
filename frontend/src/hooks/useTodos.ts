@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Todo } from '../types';
+import { type Todo } from '../types';
 
 export function useTodos() {
   const [tasks, setTasks] = useState<Todo[]>(() => {
     try {
       const saved = localStorage.getItem('todos');
-      return saved ? JSON.parse(saved) : [];
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return Array.isArray(parsed) ? parsed : [];
+      }
+      return [];
     } catch {
       return [];
     }
