@@ -1,13 +1,14 @@
 import React from 'react';
 import { type Todo } from '../types';
-import { useTodoContext } from '../context/TodoContext';
+import { useTodoStore } from '../store/useTodoStore';
 
 interface TaskItemProps {
   task: Todo;
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
-  const { toggleTask, deleteTask } = useTodoContext();
+  const toggleTask = useTodoStore((state) => state.toggleTask);
+  const deleteTask = useTodoStore((state) => state.deleteTask);
 
   return (
     <li>

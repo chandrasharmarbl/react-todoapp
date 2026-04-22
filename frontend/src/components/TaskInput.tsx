@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useTodoContext } from '../context/TodoContext';
+import { useTodoStore } from '../store/useTodoStore';
 
 const TaskInput: React.FC = () => {
-  const { addTask } = useTodoContext();
+  const addTask = useTodoStore((state) => state.addTask);
   const [text, setText] = useState('');
 
   const handleAdd = () => {

@@ -1,11 +1,11 @@
-import React, { useTransition } from 'react';
+import React, { useTransition, useMemo } from 'react';
 import TaskInput from './components/TaskInput';
 import TaskItem from './components/TaskItem';
-import { TodoProvider, useTodoContext, type FilterType } from './context/TodoContext';
+import { useTodoStore, type FilterType } from './store/useTodoStore';
 import './App.css';
 
-const TodoListApp: React.FC = () => {
-  const { filteredTasks, filter, setFilter } = useTodoContext();
+const App: React.FC = () => {
+  const { tasks, filter, setFilter } = useTodoStore();
   const [isPending, startTransition] = useTransition();
 
   const handleFilterChange = (newFilter: FilterType) => {
@@ -13,6 +13,14 @@ const TodoListApp: React.FC = () => {
       setFilter(newFilter);
     });
   };
+
+  const filteredTasks = useMemo(() => {
+    switch (filter) {
+      case 'Active': return tasks.filter(t => !t.completed);
+      case 'Completed': return tasks.filter(t => t.completed);
+      default: return tasks;
+    }
+  }, [tasks, filter]);
 
   return (
     <div className="todo-app">
@@ -31,14 +39,6 @@ const TodoListApp: React.FC = () => {
         ))}
       </ul>
     </div>
-  );
-};
-
-const App: React.FC = () => {
-  return (
-    <TodoProvider>
-      <TodoListApp />
-    </TodoProvider>
   );
 };
 
