@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
+import { useTodoContext } from '../context/TodoContext';
 
-interface TaskInputProps {
-  onAddTask: (text: string) => void;
-}
-
-const TaskInput: React.FC<TaskInputProps> = ({ onAddTask }) => {
+const TaskInput: React.FC = () => {
+  const { addTask } = useTodoContext();
   const [text, setText] = useState('');
 
   const handleAdd = () => {
     if (text.trim() === '') return;
-    onAddTask(text);
+    addTask(text);
     setText('');
   };
 

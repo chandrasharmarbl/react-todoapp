@@ -1,23 +1,24 @@
 import React from 'react';
 import { type Todo } from '../types';
+import { useTodoContext } from '../context/TodoContext';
 
 interface TaskItemProps {
   task: Todo;
-  onToggle: (id: number) => void;
-  onDelete: (id: number) => void;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
+const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
+  const { toggleTask, deleteTask } = useTodoContext();
+
   return (
     <li>
       <span
         className={`task-text ${task.completed ? 'completed' : ''}`}
-        onClick={() => onToggle(task.id)}
+        onClick={() => toggleTask(task.id)}
         style={{ cursor: 'pointer', flexGrow: 1 }}
       >
         {task.text}
       </span>
-      <button onClick={() => onDelete(task.id)}>Delete</button>
+      <button onClick={() => deleteTask(task.id)}>Delete</button>
     </li>
   );
 };

@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import TaskItem from './TaskItem';
 import { type Todo } from '../types';
+import { TodoContext } from '../context/TodoContext';
 
 describe('TaskItem Component', () => {
   const mockTask: Todo = { id: 1, text: 'Test task', completed: false };
@@ -12,12 +13,15 @@ describe('TaskItem Component', () => {
     const mockOnToggle = vi.fn();
     const mockOnDelete = vi.fn();
 
+    const mockContextValue: any = {
+      toggleTask: mockOnToggle,
+      deleteTask: mockOnDelete,
+    };
+
     render(
-      <TaskItem
-        task={mockTask}
-        onToggle={mockOnToggle}
-        onDelete={mockOnDelete}
-      />
+      <TodoContext.Provider value={mockContextValue}>
+        <TaskItem task={mockTask} />
+      </TodoContext.Provider>
     );
 
     // Verify task text is rendered
