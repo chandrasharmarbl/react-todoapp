@@ -1,0 +1,44 @@
+
+> frontend@0.0.0 test
+> vitest --run
+
+
+ RUN  v4.1.5 /Users/chandrasharma/Projects/react-basic/frontend
+
+(node:83106) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ src/App.test.tsx (2 tests | 2 failed) 15ms
+     × renders the Todo App heading 13ms
+     × allows a user to add a new task 2ms
+ ✓ src/components/TaskInput.test.tsx (1 test) 48ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.test.tsx > App Component > renders the Todo App heading
+ FAIL  src/App.test.tsx > App Component > allows a user to add a new task
+TypeError: localStorage.setItem is not a function
+ ❯ src/App.tsx:17:18
+     15|
+     16|   useEffect(() => {
+     17|     localStorage.setItem('todos', JSON.stringify(tasks));
+       |                  ^
+     18|   }, [tasks]);
+     19|
+ ❯ Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:25989:20
+ ❯ runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:874:13
+ ❯ commitHookEffectListMount node_modules/react-dom/cjs/react-dom-client.development.js:13249:29
+ ❯ commitHookPassiveMountEffects node_modules/react-dom/cjs/react-dom-client.development.js:13336:11
+ ❯ commitPassiveMountOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:15484:13
+ ❯ recursivelyTraversePassiveMountEffects node_modules/react-dom/cjs/react-dom-client.development.js:15439:11
+ ❯ commitPassiveMountOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:15519:11
+ ❯ flushPassiveEffects node_modules/react-dom/cjs/react-dom-client.development.js:18432:9
+ ❯ node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 1 passed (3)
+   Start at  17:30:02
+   Duration  420ms (transform 26ms, setup 46ms, import 66ms, tests 63ms, environment 437ms)
+
