@@ -1,0 +1,19 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "text": "Learn React Fundamentals",
+      "completed": true
+    },
+    {
+      "id": 2,
+      "text": "Learn Zustand",
+      "completed": true
+    },
+    {
+      "id": 3,
+      "text": "Master React Query",
+      "completed": false
+    }
+  ]
+}
