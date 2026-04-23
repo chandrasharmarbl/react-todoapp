@@ -2,10 +2,12 @@ import React, { useTransition, useMemo } from 'react';
 import TaskInput from './components/TaskInput';
 import TaskItem from './components/TaskItem';
 import { useTodoStore, type FilterType } from './store/useTodoStore';
+import { useTasks } from './hooks/useTasks';
 import './App.css';
 
 const App: React.FC = () => {
-  const { tasks, filter, setFilter } = useTodoStore();
+  const { filter, setFilter } = useTodoStore();
+  const { data: tasks = [], isLoading, isError } = useTasks();
   const [isPending, startTransition] = useTransition();
 
   const handleFilterChange = (newFilter: FilterType) => {

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useTodoStore } from '../store/useTodoStore';
+import { useAddTask } from '../hooks/useTasks';
 
 const TaskInput: React.FC = () => {
-  const addTask = useTodoStore((state) => state.addTask);
+  const { mutate: addTask } = useAddTask();
   const [text, setText] = useState('');
 
   const handleAdd = () => {

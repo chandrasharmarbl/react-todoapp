@@ -1,20 +1,20 @@
 import React from 'react';
 import { type Todo } from '../types';
-import { useTodoStore } from '../store/useTodoStore';
+import { useToggleTask, useDeleteTask } from '../hooks/useTasks';
 
 interface TaskItemProps {
   task: Todo;
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
-  const toggleTask = useTodoStore((state) => state.toggleTask);
-  const deleteTask = useTodoStore((state) => state.deleteTask);
+  const { mutate: toggleTask } = useToggleTask();
+  const { mutate: deleteTask } = useDeleteTask();
 
   return (
     <li>
       <span
         className={`task-text ${task.completed ? 'completed' : ''}`}
-        onClick={() => toggleTask(task.id)}
+        onClick={() => toggleTask({ id: task.id, completed: !task.completed })}
         style={{ cursor: 'pointer', flexGrow: 1 }}
       >
         {task.text}
