@@ -41,20 +41,36 @@ describe('React Query Hooks (useTasks)', () => {
     expect(api.addTask).toHaveBeenCalledWith('Mutated');
   });
 
-  it('useToggleTask mutates', async () => {
+  it('useToggleTask mutates and optimistically updates cache', async () => {
+    // Pre-populate cache
+    queryClient.setQueryData(['tasks'], [{ id: 1, text: 'Mutated', completed: false }]);
+
     vi.mocked(api.toggleTask).mockResolvedValueOnce({ id: 1, text: 'Mutated', completed: true });
     const { result } = renderHook(() => useToggleTask(), { wrapper });
     
     result.current.mutate({ id: 1, completed: true });
+
+    // Verify optimistic update (cache updated before network resolves)
+    const cachedTasks: any = queryClient.getQueryData(['tasks']);
+    expect(cachedTasks[0].completed).toBe(true);
+
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(api.toggleTask).toHaveBeenCalledWith(1, true);
   });
 
-  it('useDeleteTask mutates', async () => {
+  it('useDeleteTask mutates and optimistically updates cache', async () => {
+    // Pre-populate cache
+    queryClient.setQueryData(['tasks'], [{ id: 1, text: 'Mutated', completed: false }]);
+
     vi.mocked(api.deleteTask).mockResolvedValueOnce();
     const { result } = renderHook(() => useDeleteTask(), { wrapper });
     
     result.current.mutate(1);
+
+    // Verify optimistic update (cache updated before network resolves)
+    const cachedTasks: any = queryClient.getQueryData(['tasks']);
+    expect(cachedTasks).toHaveLength(0);
+
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(api.deleteTask).toHaveBeenCalledWith(1);
   });
