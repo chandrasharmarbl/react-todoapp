@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchTasks, addTask, toggleTask, deleteTask } from '../services/api';
-import { Todo } from '../types';
+import type { Todo } from '../types';
 
 export const useTasks = () => {
   return useQuery<Todo[], Error>({
@@ -11,7 +11,7 @@ export const useTasks = () => {
 
 export const useAddTask = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (text: string) => addTask(text),
     onSuccess: () => {
@@ -22,10 +22,25 @@ export const useAddTask = () => {
 
 export const useToggleTask = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ id, completed }: { id: number; completed: boolean }) => toggleTask(id, completed),
-    onSuccess: () => {
+    onMutate: async (updatedTask) => {
+      queryClient.cancelQueries({ queryKey: ['tasks'] });
+      const previousTasks = queryClient.getQueryData<Todo[]>(['tasks']);
+      queryClient.setQueryData<Todo[]>(['tasks'], (old) =>
+        old?.map((task) =>
+          task.id === updatedTask.id ? { ...task, completed: updatedTask.completed } : task
+        )
+      );
+      return { previousTasks };
+    },
+    onError: (_err, _updatedTask, context) => {
+      if (context?.previousTasks) {
+        queryClient.setQueryData(['tasks'], context.previousTasks);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
@@ -33,10 +48,23 @@ export const useToggleTask = () => {
 
 export const useDeleteTask = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (id: number) => deleteTask(id),
-    onSuccess: () => {
+    onMutate: async (id) => {
+      queryClient.cancelQueries({ queryKey: ['tasks'] });
+      const previousTasks = queryClient.getQueryData<Todo[]>(['tasks']);
+      queryClient.setQueryData<Todo[]>(['tasks'], (old) =>
+        old?.filter((task) => task.id !== id)
+      );
+      return { previousTasks };
+    },
+    onError: (_err, _id, context) => {
+      if (context?.previousTasks) {
+        queryClient.setQueryData(['tasks'], context.previousTasks);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
