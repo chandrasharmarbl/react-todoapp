@@ -15,7 +15,7 @@ describe('API Service', () => {
     } as Response);
     
     const data = await fetchTasks();
-    expect(fetch).toHaveBeenCalledWith('http://localhost:3001/tasks');
+    expect(fetch).toHaveBeenCalledWith('http://localhost:3000/tasks');
     expect(data).toHaveLength(1);
     expect(data[0].text).toBe('Test task');
   });
@@ -27,7 +27,7 @@ describe('API Service', () => {
     } as Response);
     
     await addTask('New task');
-    expect(fetch).toHaveBeenCalledWith('http://localhost:3001/tasks', expect.objectContaining({
+    expect(fetch).toHaveBeenCalledWith('http://localhost:3000/tasks', expect.objectContaining({
       method: 'POST',
       body: JSON.stringify({ text: 'New task', completed: false })
     }));
@@ -40,7 +40,7 @@ describe('API Service', () => {
     } as Response);
     
     await toggleTask(1, true);
-    expect(fetch).toHaveBeenCalledWith('http://localhost:3001/tasks/1', expect.objectContaining({
+    expect(fetch).toHaveBeenCalledWith('http://localhost:3000/tasks/1', expect.objectContaining({
       method: 'PATCH',
       body: JSON.stringify({ completed: true })
     }));
@@ -52,7 +52,7 @@ describe('API Service', () => {
     } as Response);
     
     await deleteTask(1);
-    expect(fetch).toHaveBeenCalledWith('http://localhost:3001/tasks/1', expect.objectContaining({
+    expect(fetch).toHaveBeenCalledWith('http://localhost:3000/tasks/1', expect.objectContaining({
       method: 'DELETE'
     }));
   });
