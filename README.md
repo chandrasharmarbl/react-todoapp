@@ -70,6 +70,9 @@ cd frontend
 npm test
 ```
 
+This project uses **colocated testing**, where test files (`*.test.tsx`) are located in the same directory as their corresponding source files. This improves maintainability and makes it easier to find related tests.
+Also, vitest was used for testing, that came up as a suggestion from Gemini.
+
 ## 📝 API Endpoints
 
 - `GET /tasks`: Fetch all tasks
