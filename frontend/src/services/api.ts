@@ -1,4 +1,4 @@
-import { Todo } from '../types';
+import { type Todo } from '../types';
 
 const API_URL = 'http://localhost:3001/tasks';
 

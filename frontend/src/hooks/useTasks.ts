@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchTasks, addTask, toggleTask, deleteTask } from '../services/api';
-import type { Todo } from '../types';
+import { type Todo } from '../types';
 
 /** How long cached tasks are considered fresh before a background refetch. */
 export const TASKS_STALE_TIME = 30_000; // 30 seconds

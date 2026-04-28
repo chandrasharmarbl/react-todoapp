@@ -11,7 +11,7 @@
 import { useMemo } from 'react';
 import { useTasks } from './useTasks';
 import { useTodoStore } from '../store/useTodoStore';
-import type { Todo } from '../types';
+import { type Todo } from '../types';
 
 export interface UseFilteredTasksResult {
   filteredTasks: Todo[];
