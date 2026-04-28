@@ -2,10 +2,18 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchTasks, addTask, toggleTask, deleteTask } from '../services/api';
 import type { Todo } from '../types';
 
+/** How long cached tasks are considered fresh before a background refetch. */
+export const TASKS_STALE_TIME = 30_000; // 30 seconds
+
+/** How long inactive task data is kept in memory before garbage collection. */
+export const TASKS_GC_TIME = 5 * 60 * 1_000; // 5 minutes
+
 export const useTasks = () => {
   return useQuery<Todo[], Error>({
     queryKey: ['tasks'],
     queryFn: fetchTasks,
+    staleTime: TASKS_STALE_TIME,
+    gcTime: TASKS_GC_TIME,
   });
 };
 
