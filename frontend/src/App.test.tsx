@@ -2,6 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App';
+import AppWithDevTools from './AppWithDevTools';
 import * as api from './services/api';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 
@@ -75,3 +76,35 @@ describe('App Component', () => {
     expect(screen.queryByText('Active Task')).not.toBeInTheDocument();
   });
 });
+
+// ─── React Query DevTools ──────────────────────────────────────────────────────
+describe('React Query DevTools', () => {
+  beforeEach(() => {
+    queryClient.clear();
+    vi.resetAllMocks();
+  });
+
+  it('AppWithDevTools renders the app content correctly', async () => {
+    // AppWithDevTools wraps App + ReactQueryDevtools inside a QueryClientProvider.
+    // The DevTools panel itself is only visible in development builds, but we
+    // can verify the App tree renders as expected.
+    vi.mocked(api.fetchTasks).mockResolvedValueOnce([]);
+    render(<AppWithDevTools />);
+    expect(screen.getByRole('heading', { name: /todo app/i })).toBeInTheDocument();
+  });
+
+  it('AppWithDevTools includes ReactQueryDevtools in the component tree', async () => {
+    // ReactQueryDevtools injects a button with data-testid="react-query-devtools-panel-toggle-btn"
+    // into the document when rendered. We verify it is present after mount.
+    vi.mocked(api.fetchTasks).mockResolvedValueOnce([]);
+    render(<AppWithDevTools />);
+
+    // The devtools toggle button should be rendered into the document
+    const devtoolsToggle = document.querySelector('[aria-label="Open React Query Devtools"]') ||
+      document.querySelector('[data-testid="react-query-devtools-panel-toggle-btn"]') ||
+      document.querySelector('.tsqd-open-btn');
+
+    expect(devtoolsToggle).not.toBeNull();
+  });
+});
+
