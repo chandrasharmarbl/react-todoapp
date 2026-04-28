@@ -8,6 +8,10 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 vi.mock('./services/api');
 
+vi.mock('@tanstack/react-query-devtools', () => ({
+  ReactQueryDevtools: () => <div data-testid="react-query-devtools" />,
+}));
+
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: false } },
 });
@@ -29,17 +33,19 @@ describe('App Component', () => {
   it('renders the Todo App heading', async () => {
     vi.mocked(api.fetchTasks).mockResolvedValueOnce([]);
     renderApp();
-    const heading = screen.getByRole('heading', { name: /todo app/i });
+    // App shows a loading state first — wait for data to resolve
+    const heading = await screen.findByRole('heading', { name: /todo app/i });
     expect(heading).toBeInTheDocument();
   });
 
   it('allows a user to add a new task', async () => {
     const user = userEvent.setup();
     vi.mocked(api.fetchTasks).mockResolvedValueOnce([]);
-    
+
     renderApp();
 
-    const input = screen.getByPlaceholderText(/add a new task/i);
+    // Wait past loading state before querying for input
+    const input = await screen.findByPlaceholderText(/add a new task/i);
     const button = screen.getByRole('button', { name: /add task/i });
 
     // Mock the post request and the subsequent refetch
@@ -85,26 +91,23 @@ describe('React Query DevTools', () => {
   });
 
   it('AppWithDevTools renders the app content correctly', async () => {
-    // AppWithDevTools wraps App + ReactQueryDevtools inside a QueryClientProvider.
-    // The DevTools panel itself is only visible in development builds, but we
-    // can verify the App tree renders as expected.
+    // AppWithDevTools owns its own QueryClient — verify the App tree renders.
     vi.mocked(api.fetchTasks).mockResolvedValueOnce([]);
     render(<AppWithDevTools />);
-    expect(screen.getByRole('heading', { name: /todo app/i })).toBeInTheDocument();
+    // Wait past the loading state for the heading to appear
+    const heading = await screen.findByRole('heading', { name: /todo app/i });
+    expect(heading).toBeInTheDocument();
   });
 
   it('AppWithDevTools includes ReactQueryDevtools in the component tree', async () => {
-    // ReactQueryDevtools injects a button with data-testid="react-query-devtools-panel-toggle-btn"
-    // into the document when rendered. We verify it is present after mount.
+    // We mock @tanstack/react-query-devtools (see top of file) so ReactQueryDevtools
+    // renders a <div data-testid="react-query-devtools" /> sentinel.
+    // This test verifies that AppWithDevTools actually renders <ReactQueryDevtools />,
+    // i.e. our integration code is correct — not the library's DOM output.
     vi.mocked(api.fetchTasks).mockResolvedValueOnce([]);
     render(<AppWithDevTools />);
 
-    // The devtools toggle button should be rendered into the document
-    const devtoolsToggle = document.querySelector('[aria-label="Open React Query Devtools"]') ||
-      document.querySelector('[data-testid="react-query-devtools-panel-toggle-btn"]') ||
-      document.querySelector('.tsqd-open-btn');
-
-    expect(devtoolsToggle).not.toBeNull();
+    // The mocked DevTools sentinel should be in the document immediately
+    expect(screen.getByTestId('react-query-devtools')).toBeInTheDocument();
   });
 });
-
